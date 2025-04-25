@@ -10,6 +10,8 @@ import BookDetail from './components/BookDetail/BookDetail';
 import ListedBook from './components/ListedBook/ListedBook';
 import AboutUs from './components/About/About';
 import Contact from './components/Contact/Contact';
+import Login from './components/Login/Login';
+
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: '/contact',
         element: <Contact/>
+      },
+      {
+        path: '/login',
+        element: <Login/>
       },
       {
         path: 'books/:bookId',
