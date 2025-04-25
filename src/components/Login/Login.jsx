@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import auth from '../../Firebase/Firebase.init';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa'; // Import Google icon
 
 function Login() {
@@ -14,14 +14,18 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location (previous route)
   const provider = new GoogleAuthProvider();
+
+  // Get the location the user was trying to access
+  const from = location.state?.from?.pathname || '/books'; // Default to /books if no previous location
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
       console.log("✅ User signed in with Google:", result.user);
-      navigate('/');  // Redirect to the dashboard or home page
+      navigate(from, { replace: true }); // Redirect to the previous location or /books
     } catch (error) {
       setError(error.message);
       console.error("❌ Firebase error:", error.message);
@@ -48,7 +52,7 @@ function Login() {
         await signInWithEmailAndPassword(auth, email, password);
         console.log("✅ User signed in:", email);
       }
-      navigate('/dashboard');
+      navigate(from, { replace: true }); // Redirect to the previous location or /books
     } catch (error) {
       setError(error.message);
       console.error("❌ Firebase error:", error.message);
@@ -58,8 +62,8 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screenmy-16">
-      <div className="w-full max-w-xl p-8 space-y-6 bg-white rounded-lg shadow-lg  border border-gray-300  my-16">
+    <div className="flex items-center justify-center min-h-screen my-16">
+      <div className="w-full max-w-xl p-8 space-y-6 bg-white rounded-lg shadow-lg border border-gray-300 my-16">
         <h1 className="text-3xl font-semibold text-center">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -138,7 +142,7 @@ function Login() {
             {isSignUp ? "Already have an account?" : "Don't have an account?"}
             <button 
               onClick={() => setIsSignUp(!isSignUp)} 
-              className="text-indigo-600 hover:text-indigo-800 font-semibold "
+              className="text-indigo-600 hover:text-indigo-800 font-semibold"
             >
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
