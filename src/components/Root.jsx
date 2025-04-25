@@ -1,5 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import BookDetail from './BookDetail/BookDetail'
 import Books from './Books/Books'
 import ErrorPage from './ErrorPage'
 import Footer from './Footer/Footer'
@@ -15,6 +16,7 @@ function Root() {
             <Home/>
             <ErrorPage/>
             <Books/>
+            <BookDetail/>
         </Outlet>
         <Footer/>
     </div>
