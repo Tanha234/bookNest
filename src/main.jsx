@@ -8,6 +8,8 @@ import Home from './components/Home/Home';
 import Books from './components/Books/Books';
 import BookDetail from './components/BookDetail/BookDetail';
 import ListedBook from './components/ListedBook/ListedBook';
+import AboutUs from './components/About/About';
+import Contact from './components/Contact/Contact';
 
 const router = createBrowserRouter([
   {
@@ -17,11 +19,20 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home />
+        element: <Home />,
+        loader:()=>fetch('https://www.googleapis.com/books/v1/volumes?q=harry+potter&startIndex=0&maxResults=40')
       },
       {
         path: '/books',
         element: <Books />
+      },
+      {
+        path: '/about',
+        element: <AboutUs/>
+      },
+      {
+        path: '/contact',
+        element: <Contact/>
       },
       {
         path: 'books/:bookId',

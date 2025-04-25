@@ -1,18 +1,56 @@
-import React from 'react';
-import book from '../../images/books-removebg-preview.png';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import book from '../../images/books-removebg-preview.png'; // Your default book image
 import { FaBook, FaPencilAlt, FaFlask, FaMagic } from 'react-icons/fa';
+import Testimonial from './Testimonial';
+import FeaturedBooks from './Featured';
 
 function Home() {
+  const [bookOfTheMonth, setBookOfTheMonth] = useState(null); // State to store the Book of the Month
+  const navigate = useNavigate();
+
+  const handleBrowseBooks = () => {
+    navigate('/books');
+  };
+
+  // Fetch books data from API
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch('https://www.googleapis.com/books/v1/volumes?q=the+great+adventure&startIndex=0&maxResults=40');
+        const data = await response.json();
+        const firstBook = data.items ? data.items[0] : null; // Select the first book from the API
+        if (firstBook) {
+          setBookOfTheMonth({
+            title: firstBook.volumeInfo.title,
+            description: firstBook.volumeInfo.description,
+            image: firstBook.volumeInfo.imageLinks?.thumbnail,
+            author: firstBook.volumeInfo.authors ? firstBook.volumeInfo.authors.join(', ') : 'Unknown',
+            reason: 'This month’s book was chosen for its thrilling adventure and captivating storyline that keeps readers on the edge of their seats!'
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
-      <div className='grid md:grid-cols-2 sm:grid-cols-1 place-items-center md:px-44 sm:px-0 py-10'>
+      <div className="grid md:grid-cols-2 sm:grid-cols-1 place-items-center md:px-44 sm:px-0 py-10">
         <div className="text-center md:text-left space-y-4">
-          <h1 className="text-4xl font-bold text-indigo-900">Unlock Your Imagination</h1>
+          <h1 className="text-3xl font-bold text-indigo-900">Unlock Your Imagination</h1>
           <p className="text-gray-600 text-lg">
-            Dive into a world of stories, knowledge, and inspiration with BookNest. Your next adventure is just a page away. Discover timeless classics and modern gems—all in one place.
+            Dive into a world of stories, knowledge, and inspiration with BookNest. Your next adventure is just a page away.Whether you're seeking thrilling adventures, heartwarming tales, or insightful wisdom, we have something for everyone.
+  <br />
           </p>
-          <button className="bg-indigo-900 mt-5 text-white px-6 py-2 rounded hover:bg-blue-700">
+          <button 
+            onClick={handleBrowseBooks} 
+            className="bg-indigo-900 mt-5 text-white px-6 py-2 rounded hover:bg-blue-700"
+          >
             Browse Books
           </button>
         </div>
@@ -22,27 +60,11 @@ function Home() {
       </div>
 
       {/* Featured Books Section */}
-      <div className="py-12 bg-gray-50">
-        <h2 className="text-3xl text-center font-semibold text-indigo-900 mb-6">Featured Books</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6">
-          {/* Loop through books (This is just an example, replace with dynamic content) */}
-          <div className="p-4 border rounded-lg shadow-md">
-            <img src="https://via.placeholder.com/150" alt="Book" className="w-full h-48 object-cover mb-4" />
-            <h3 className="font-semibold text-lg text-center">Book Title</h3>
-            <p className="text-center text-gray-600">Author Name</p>
-          </div>
-          <div className="p-4 border rounded-lg shadow-md">
-            <img src="https://via.placeholder.com/150" alt="Book" className="w-full h-48 object-cover mb-4" />
-            <h3 className="font-semibold text-lg text-center">Book Title</h3>
-            <p className="text-center text-gray-600">Author Name</p>
-          </div>
-          {/* Add more featured books here */}
-        </div>
-      </div>
+      <FeaturedBooks />
 
-        {/* Categories Section */}
-        <div className="py-12 md:px-44 sm:px-0 ">
-        <h2 className="text-3xl text-center font-semibold text-indigo-900 mb-6">Browse By Category</h2>
+      {/* Categories Section */}
+      <div className="py-12 md:px-44 sm:px-0 mt-10 mb-5">
+        <h2 className="text-3xl text-center font-semibold text-indigo-900 mb-10">Browse By Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6">
           <div className="border border-indigo-900 text-black p-6 rounded-lg text-center">
             <FaBook className="mx-auto text-4xl mb-4 text-indigo-900" />
@@ -63,40 +85,36 @@ function Home() {
         </div>
       </div>
 
+      {/* Book of the Month Section */}
+      {bookOfTheMonth && (
+        <div className="py-12 bg-gray-50">
+          <h2 className="text-3xl text-center font-semibold text-indigo-900 mb-6">Book of the Month</h2>
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-6">
+            <img 
+              src={bookOfTheMonth.image} 
+              alt={bookOfTheMonth.title} 
+              className="w-full md:w-full rounded-lg shadow-lg "
+            />
+            <div className="text-center md:text-left md:px-16">
+              <h3 className="text-2xl font-semibold text-indigo-900">{bookOfTheMonth.title}</h3>
+              <p className="text-gray-600 mt-2">{bookOfTheMonth.description}</p>
+              <p className="text-gray-600 mt-2">Author: {bookOfTheMonth.author}</p>
+              <p className="text-gray-600 mt-4 italic">{bookOfTheMonth.reason}</p>
+              <button 
+                onClick={() => navigate('/book-of-the-month')}
+                className="mt-5 bg-indigo-900 text-white px-6 py-2 rounded hover:bg-blue-700"
+              >
+                Read More
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Testimonials Section */}
-      <div className="bg-gray-50 py-12">
-        <h2 className="text-3xl text-center font-semibold text-indigo-900 mb-6">What Our Readers Say</h2>
-        <div className="flex justify-center space-x-8">
-          <div className="bg-white shadow-md rounded-lg p-6 max-w-xs text-center">
-            <p className="text-lg text-gray-600 mb-4">"An amazing collection of books, so many genres to choose from!"</p>
-            <p className="font-semibold text-indigo-900">John Doe</p>
-            <p className="text-sm text-gray-500">Book Lover</p>
-          </div>
-          <div className="bg-white shadow-md rounded-lg p-6 max-w-xs text-center">
-            <p className="text-lg text-gray-600 mb-4">"I discovered so many new books that I couldn't put down!"</p>
-            <p className="font-semibold text-indigo-900">Jane Smith</p>
-            <p className="text-sm text-gray-500">Book Enthusiast</p>
-          </div>
-          {/* Add more testimonials as needed */}
-        </div>
-      </div>
+      <Testimonial />
 
-      {/* Newsletter Signup Section */}
-      <div className="bg-indigo-900 text-white py-12">
-        <h2 className="text-3xl text-center font-semibold mb-6">Stay Updated with Our Newsletter</h2>
-        <p className="text-center text-lg mb-6">Get the latest book recommendations and updates directly in your inbox.</p>
-        <div className="flex justify-center">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="p-3 rounded-l-lg text-gray-800 w-64"
-          />
-          <button className="bg-blue-500 text-white px-6 py-3 rounded-r-lg hover:bg-blue-600">
-            Subscribe
-          </button>
-        </div>
-      </div>
+    
     </div>
   );
 }

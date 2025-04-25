@@ -4,7 +4,7 @@ function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-100 shadow py-4 mx-auto px-44">
+    <nav className="bg-gray-100 shadow py-4 mx-auto md:px-44 sm:px-0">
       <div className="flex justify-between items-center">
         {/* Left - Site name */}
         <div className="text-xl font-bold">BookNest</div>
@@ -19,8 +19,10 @@ function Navbar() {
         {/* Middle - Links (desktop) */}
         <div className="hidden md:flex space-x-6">
           <a href="/" className="hover:text-blue-500">Home</a>
+          <a href="/about" className="hover:text-blue-500">About</a>
           <a href="/books" className="hover:text-blue-500">Books</a>
-          <a href="#" className="hover:text-blue-500">About</a>
+          <a href="/contact" className="hover:text-blue-500">Contact</a>
+        
         </div>
 
         {/* Right - Buttons (desktop) */}
