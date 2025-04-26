@@ -12,7 +12,8 @@ import ListedBook from './components/ListedBook/ListedBook';
 import AboutUs from './components/About/About';
 import Contact from './components/Contact/Contact';
 import Login from './components/Login/Login';
-import protectedBooksLoader from './loaders/protectedBooksLoader'; // NEW
+import protectedBooksLoader from './loaders/ProtectedBooksLoader';
+
 
 const fetchBooks = async () => {
   const response = await fetch(
