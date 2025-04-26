@@ -1,7 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'; 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
 import App from './App';
 import ErrorPage from './components/ErrorPage';
 import Home from './components/Home/Home';
@@ -11,33 +12,37 @@ import ListedBook from './components/ListedBook/ListedBook';
 import AboutUs from './components/About/About';
 import Contact from './components/Contact/Contact';
 import Login from './components/Login/Login';
-import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import protectedBooksLoader from './loaders/protectedBooksLoader'; // NEW
 
 const fetchBooks = async () => {
-  const response = await fetch('https://www.googleapis.com/books/v1/volumes?q=harry+potter&startIndex=0&maxResults=40');
+  const response = await fetch(
+    'https://www.googleapis.com/books/v1/volumes?q=harry+potter&startIndex=0&maxResults=40'
+  );
   return response.json();
 };
 
 const fetchBookDetail = async ({ params }) => {
-  const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${params.bookId}`);
+  const response = await fetch(
+    `https://www.googleapis.com/books/v1/volumes/${params.bookId}`
+  );
   return response.json();
 };
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />, 
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
         element: <Home />,
-        loader: fetchBooks, 
+        loader: fetchBooks,
       },
       {
         path: '/books',
-        element: <PrivateRoute element={<Books />} />, // Wrap the /books route with PrivateRoute
-        loader: fetchBooks, 
+        element: <Books />,
+        loader: protectedBooksLoader, // ✅ use protected loader here
       },
       {
         path: '/about',
@@ -59,14 +64,14 @@ const router = createBrowserRouter([
       {
         path: '/listedBook',
         element: <ListedBook />,
-        loader: fetchBooks, 
-      }
-    ]
+        loader: fetchBooks,
+      },
+    ],
   },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} /> 
+    <RouterProvider router={router} />
   </StrictMode>
 );

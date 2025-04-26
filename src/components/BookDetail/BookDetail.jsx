@@ -1,12 +1,9 @@
 import React from 'react';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import swal from 'sweetalert'; // ✅ Import sweetalert
 
 function BookDetail() {
-  const { bookId } = useParams();
-  const data = useLoaderData();
-
-  const book = data.items.find((item) => item.id === bookId);
+  const book = useLoaderData(); // ✅ Directly get single book from loader
 
   if (!book) {
     return <p className="text-center text-red-500 mt-10">Book not found.</p>;
@@ -24,8 +21,15 @@ function BookDetail() {
     infoLink,
   } = book.volumeInfo;
 
+  // Safely handle the image URL from imageLinks
   const image =
-    imageLinks?.large || imageLinks?.medium || imageLinks?.small || imageLinks?.thumbnail;
+    imageLinks?.large ||
+    imageLinks?.medium ||
+    imageLinks?.small ||
+    imageLinks?.thumbnail ||
+    'https://via.placeholder.com/128x193?text=No+Image'; // Fallback if no image is found
+
+  console.log("Image URL:", image);  // Log to check the image URL
 
   // ✅ Mark as Read
   const handleMarkAsRead = () => {
@@ -60,9 +64,10 @@ function BookDetail() {
       {/* Left: Book Image */}
       <div className="md:w-1/3 flex justify-center items-start mt-3">
         <img
-          src={image || 'https://via.placeholder.com/128x193?text=No+Image'}
+          src={image}
           alt={title}
           className="rounded shadow-md w-60 h-auto object-cover"
+          onError={(e) => e.target.src = 'https://via.placeholder.com/128x193?text=No+Image'} // Fallback if image fails to load
         />
       </div>
 
@@ -94,7 +99,7 @@ function BookDetail() {
         </p>
 
         {/* Buttons */}
-        <div className="mt-6 flex gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <button
             onClick={handleMarkAsRead}
             className="bg-indigo-900 hover:bg-indigo-800 text-white px-6 py-2 rounded shadow"
@@ -107,6 +112,14 @@ function BookDetail() {
           >
             Add To Wishlist
           </button>
+          <a
+            href={infoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className=" bg-indigo-900 border-2 border-gray-700 text-white hover:bg-gray-200 px-6 py-2 rounded shadow inline-block"
+          >
+            Read Now
+          </a>
         </div>
       </div>
     </div>
